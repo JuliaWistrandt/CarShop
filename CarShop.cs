@@ -12,30 +12,23 @@ namespace CarShop
     {
         public List<Car> carList = new List<Car>();
 
-        public void AddCar(string brand, double price, string engine)
+        public string AddCar(string brand, double price, string engine)
         {
             carList.Add(new Car(brand, price, engine));
-           
+            
+            //want this to shows up on consolle!!
+            return $"Thank you. The vehicle is ready for sale.";
+
         }
 
         public string RemoveCar(string brandName)
         {
             var car = carList.FirstOrDefault(x => x.Brand == brandName);
             carList.Remove(car);
-            return $"Sucesfully removed";
+            return $"Thank you. The car was sucesfully removed.";
         }
 
-        // Not working method
-        /*
-         * public string DiscountCar(int i, int price)
-        {
-            var car = carList[i+1];
-            car.Price = price;
-            return $"The price has been changed to {price}.";
-  
-        } */
-
-            
+      
 
         public string ShowCars()
         { 
@@ -50,26 +43,15 @@ namespace CarShop
             }
 
             return sb.ToString();
-        
+
         }
 
-
-    }
-
-    public class Car 
-    {
-        public Car(string brand, double price, string engine)
+        public string DiscountCar(string brandName)
         {
-            Brand = brand;
-            Price = price;
-            Engine = engine;
+            var car = carList.FirstOrDefault(x => x.Brand == brandName);
+            return car.GetDiscount();
         }
 
-        public string Brand { get; set; }
-        public double Price { get; set; }
-        public string Engine { get; set; }
-
-     
 
     }
 
