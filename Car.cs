@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarShop
 {
-    public class Car : CarShop
+    public class Car
     {
         public Car(string brand, double price, string engine)
         {
