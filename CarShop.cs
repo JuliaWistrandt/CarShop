@@ -11,22 +11,19 @@ using System.Threading.Tasks;
 
 namespace CarShop
 {
-    public class CarShop : INotifyable
+   
+    public class CarShop 
     {
 
+        CarShopStateHandler _del; // delegate is here
         public List<Car> carList = new List<Car>();
-        public event Action<Action<string>> OnWarehouseIsEmpty;
         private int carCounter = 0;
-     
-        public void Notify(Action<string> message)
-        {
-            message("The shop is running out of new cars to sell\nit's time to order some!");
-        }
 
-        public void Boost(Action<string> message)
+
+        //constrictor for the delegate
+        public void RegisterHandler(CarShopStateHandler del)
         {
-            
-            if (carList.Count == 0) OnWarehouseIsEmpty.Invoke(message);
+            _del = del;
         }
 
 
@@ -34,16 +31,18 @@ namespace CarShop
         {
             
             carList.Add(new Car(brand, price, engine));
+            if (_del != null)
+                _del.Invoke("Delegate notification new car appears!");
             carCounter++;
-            return $"Thank you. The vehicle is ready for sale.";
-
+            return $"Thank you.";
         }
 
         public string RemoveCar(string brandName)
         {
             var car = carList.FirstOrDefault(x => x.Brand == brandName);
-            return $"Thank you. The car ({brandName}) was sucesfully removed.";
-            
+            if (_del != null && carList.Count == 0)
+                _del("Delegate notification all cars are sold out!");
+            return $"Thank you. The car ({brandName}) was sucesfully removed.";  
         }
 
       
@@ -76,6 +75,22 @@ namespace CarShop
             carList.Clear();
         
         }
+
+        #region OldData
+
+        //public event Action<Action<string>> OnWarehouseIsEmpty;
+
+        //public void Notify(Action<string> message)
+        //{
+        //    message("The shop is running out of new cars to sell\nit's time to order some!");
+        //}
+
+        //public void Boost(Action<string> message)
+        //{
+
+        //    if (carList.Count == 0) OnWarehouseIsEmpty.Invoke(message);
+        //}
+        #endregion OldData
 
     }
 }
