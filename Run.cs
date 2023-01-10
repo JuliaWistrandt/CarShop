@@ -7,18 +7,23 @@ using System.Threading.Tasks;
 
 namespace CarShop
 {
+    //delegate
+    public delegate void CarShopStateHandler(string message);
     internal class Run
     {
         public void DoRun() 
         {
             CarShop cars = new CarShop();
-            List<INotifyable> listOfManagers = new List<INotifyable>();
-            Retailer carAppears = new Retailer();
 
             _ = cars.AddCar("BMW", 1500, "Bensin");
             _ = cars.AddCar("Audi", 4500, "Diesel");
             _ = cars.AddCar("Tesla", 9500, "Electric");
 
+            //method to print the delegate
+            void Display(string message)
+            {
+                Console.WriteLine(message);
+            }
 
 
             #region OldData
@@ -82,23 +87,23 @@ namespace CarShop
                         double price = Convert.ToInt64(Console.ReadLine());
                         Console.WriteLine("Please, insert car's engine");
                         string engine = Console.ReadLine();
-                        Console.WriteLine(cars.AddCar(brand, price, engine));
-                        Console.Clear();
+                        cars.RegisterHandler(Display); // Delegate is here
+                        Console.WriteLine(cars.AddCar(brand, price, engine));                                                         
+                       
 
                         break;
 
                     case 2:
                         Console.WriteLine("Insert a name of car's model you want ot remove from the list");
                         brand = Console.ReadLine();
+                        cars.RegisterHandler(Display);// Delegate is here
                         Console.WriteLine(cars.RemoveCar(brand));
-                        Console.Clear();
-
+                        
                         break;
 
                     case 3:
                         Console.WriteLine("Here is a list of all cars in sale:");
                         Console.WriteLine(cars.ShowCars());
-                        Console.Clear();
 
                         break;
 
@@ -107,38 +112,10 @@ namespace CarShop
                         Console.WriteLine("Enter cars model to change it's price:");
                         var carDiscount = Console.ReadLine();
                         Console.WriteLine(cars.DiscountCar(carDiscount));
-                        Console.Clear();
 
                         break;
 
                     case 5:
-                        Console.WriteLine("You chose to notify Sales Manager");
-                        Console.WriteLine("Please, insert manager's name");
-                        string nameSD = Console.ReadLine();
-                        listOfManagers.Add(new SalesManager(nameSD));
-                        foreach (var manager in listOfManagers) carAppears.OnNewCarAppears += manager.Notify;
-                       
-                        carAppears.Raise(y => Console.WriteLine(y));
-                        Console.Clear();
-
-                        break;
-
-                    case 6:
-                        //for some reason this method worked out only once and never again, have no idea why
-                        Console.WriteLine("You chose to simulate cars shortage notifications\n");
-                        
-                        cars.OnWarehouseIsEmpty += cars.Notify;
-
-                        cars.WareHouseSoldOut();
-
-                        cars.Boost(x => Console.WriteLine(x)); 
-                        
-                        Console.WriteLine("Pew pew!");
-                        Console.Clear();
-
-                        break;
-
-                    case 7:
                         Console.WriteLine("Goodbye!");
                         exitMenue = true;
                         
