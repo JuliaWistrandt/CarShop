@@ -16,33 +16,43 @@ namespace CarShop
     {
 
         CarShopStateHandler _del; // delegate is here
+        
         public List<Car> carList = new List<Car>();
+        private const int maxLengthCarList = 5;
+        
         private int carCounter = 0;
 
 
-        //constrictor for the delegate
+        //constructor for the delegate
         public void RegisterHandler(CarShopStateHandler del)
         {
             _del = del;
         }
 
+        
 
-        public string AddCar(string brand, double price, string engine)
+        public void AddCar(string brand, double price, string engine)
         {
-            
-            carList.Add(new Car(brand, price, engine));
-            if (_del != null)
-                _del.Invoke("Delegate notification new car appears!");
-            carCounter++;
-            return $"Thank you.";
+            // for inner message ex : Reduce aisle width in the racking area (carList)or Reduce aisle width in the racking area.Change your storage medium.
+            if (this.carList.Count == maxLengthCarList)
+            {
+                throw new DatabaseException(message: "Oops, looks like we are running out of warehouse space.\nPlease try again later");
+            }
+            else
+            {
+                this.carList.Add((new Car(brand, price, engine)));
+                _del.Invoke($"A new car is added to the carShop!\n");
+                carCounter++;
+            }   
         }
 
-        public string RemoveCar(string brandName)
+        public void RemoveCar(string brandName)
         {
             var car = carList.FirstOrDefault(x => x.Brand == brandName);
-            if (_del != null && carList.Count == 0)
-                _del("Delegate notification all cars are sold out!");
-            return $"Thank you. The car ({brandName}) was sucesfully removed.";  
+            carList.Remove(car);
+            if (car is null) throw new DatabaseException(message: $"Oops, looks like there is no such car ({brandName}) in our carShop.\nPlease try again later");
+            _del.Invoke($"Thank you. The car ({brandName}) was sucesfully removed.");
+            
         }
 
       
